@@ -2,3 +2,4 @@ joblib
 pandas
 streamlit
 os
+scikit-learn
