@@ -1,15 +1,19 @@
 import streamlit as st
 import pandas as pd
 import joblib
+import os
 
 st.set_page_config(page_title="California Housing Prices Prediction", layout="centered")
 st.title("California Housing Prices Prediction")
 st.write("This application predicts housing prices in California based on various features.")
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PIPELINE_PATH = os.path.join(BASE_DIR, "california_housing_pipeline.pkl")
+
 # load pipeline
 @st.cache_resource
 def load_pipeline():
-    return joblib.load("california_housing_pipeline.pkl")
+    return joblib.load(PIPELINE_PATH)
 
 pipeline = load_pipeline()
 
