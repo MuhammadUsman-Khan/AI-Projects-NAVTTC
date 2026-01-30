@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BikeShare AI | Demand Forecasting System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚲</text></svg>">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-animation">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="grid-lines"></div>
+    </div>
+
+    <!-- Creator Signature -->
+    <div class="creator-signature">
+        <div class="signature-content">
+            <div class="signature-icon">
+                <i class="fas fa-code"></i>
+            </div>
+            <div class="signature-text">
+                <span class="dev-name">Muhammad Usman Khan</span>
+                <span class="dev-title">AI/ML Developer</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-bicycle"></i>
+                        <div class="logo-pulse"></div>
+                    </div>
+                    <div class="logo-text">
+                        <h1>BikeShare<span class="ai-text">AI</span></h1>
+                        <p class="tagline">Intelligent Demand Forecasting System</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="model-info">
+                    <div class="model-tag">
+                        <i class="fas fa-brain"></i>
+                        <span>Polynomial Regression Model</span>
+                    </div>
+                    <div class="model-tag">
+                        <i class="fas fa-database"></i>
+                        <span>17K+ Records</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="dashboard">
+            <!-- Left Panel - Input Form -->
+            <div class="input-panel">
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-cogs"></i> Prediction Parameters</h2>
+                        <div class="panel-subtitle">Configure environmental & temporal factors</div>
+                    </div>
+
+                    <form id="prediction-form">
+                        <!-- Time & Date Section -->
+                        <div class="section">
+                            <div class="section-header">
+                                <i class="fas fa-clock"></i>
+                                <h3>Time & Date Configuration</h3>
+                            </div>
+                            
+                            <div class="input-grid">
+                                <div class="input-group">
+                                    <label for="yr">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        Year
+                                    </label>
+                                    <div class="custom-select">
+                                        <select id="yr" name="yr" required>
+                                            <option value="2011">2011</option>
+                                            <option value="2012">2012</option>
+                                        </select>
+                                        <div class="select-arrow"></div>
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="season">
+                                        <i class="fas fa-seedling"></i>
+                                        Season
+                                    </label>
+                                    <div class="custom-select">
+                                        <select id="season" name="season" required>
+                                            <option value="spring">Spring</option>
+                                            <option value="summer">Summer</option>
+                                            <option value="fall">Fall</option>
+                                            <option value="winter">Winter</option>
+                                        </select>
+                                        <div class="select-arrow"></div>
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="mnth">
+                                        <i class="fas fa-calendar"></i>
+                                        Month
+                                    </label>
+                                    <div class="custom-select">
+                                        <select id="mnth" name="mnth" required>
+                                            <option value="january">January</option>
+                                            <option value="february">February</option>
+                                            <option value="march">March</option>
+                                            <option value="april">April</option>
+                                            <option value="may">May</option>
+                                            <option value="june">June</option>
+                                            <option value="july">July</option>
+                                            <option value="august">August</option>
+                                            <option value="september">September</option>
+                                            <option value="october">October</option>
+                                            <option value="november">November</option>
+                                            <option value="december">December</option>
+                                        </select>
+                                        <div class="select-arrow"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Day Information -->
+                        <div class="section">
+                            <div class="section-header">
+                                <i class="fas fa-calendar-day"></i>
+                                <h3>Day Configuration</h3>
+                            </div>
+                            
+                            <div class="input-grid">
+                                <div class="input-group">
+                                    <label for="weekday">
+                                        <i class="fas fa-calendar-week"></i>
+                                        Weekday
+                                    </label>
+                                    <div class="custom-select">
+                                        <select id="weekday" name="weekday" required>
+                                            <option value="sunday">Sunday</option>
+                                            <option value="monday">Monday</option>
+                                            <option value="tuesday">Tuesday</option>
+                                            <option value="wednesday">Wednesday</option>
+                                            <option value="thursday">Thursday</option>
+                                            <option value="friday">Friday</option>
+                                            <option value="saturday">Saturday</option>
+                                        </select>
+                                        <div class="select-arrow"></div>
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="hr">
+                                        <i class="fas fa-clock"></i>
+                                        Hour
+                                        <span class="value-display" id="hr-display">00:00</span>
+                                    </label>
+                                    <div class="time-slider">
+                                        <input type="range" id="hr" name="hr" min="0" max="23" value="0">
+                                        <div class="slider-ticks">
+                                            <span>0</span>
+                                            <span>6</span>
+                                            <span>12</span>
+                                            <span>18</span>
+                                            <span>23</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="toggle-grid">
+                                <div class="toggle-group">
+                                    <div class="toggle-label">
+                                        <i class="fas fa-umbrella-beach"></i>
+                                        Holiday
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="holiday" name="holiday">
+                                        <span class="slider"></span>
+                                        <span class="toggle-text" id="holiday-text">No</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="toggle-group">
+                                    <div class="toggle-label">
+                                        <i class="fas fa-briefcase"></i>
+                                        Working Day
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="workingday" name="workingday" checked>
+                                        <span class="slider"></span>
+                                        <span class="toggle-text" id="workingday-text">Yes</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Weather Conditions -->
+                        <div class="section">
+                            <div class="section-header">
+                                <i class="fas fa-cloud-sun"></i>
+                                <h3>Weather Conditions</h3>
+                            </div>
+                            
+                            <div class="weather-selector">
+                                <div class="weather-option" data-value="clear">
+                                    <div class="weather-icon sunny">
+                                        <i class="fas fa-sun"></i>
+                                    </div>
+                                    <div class="weather-details">
+                                        <span class="weather-name">Clear</span>
+                                        <span class="weather-desc">Few clouds</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="weather-option" data-value="mist">
+                                    <div class="weather-icon misty">
+                                        <i class="fas fa-cloud"></i>
+                                    </div>
+                                    <div class="weather-details">
+                                        <span class="weather-name">Misty</span>
+                                        <span class="weather-desc">Mist + Cloudy</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="weather-option" data-value="light_rain">
+                                    <div class="weather-icon rainy">
+                                        <i class="fas fa-cloud-rain"></i>
+                                    </div>
+                                    <div class="weather-details">
+                                        <span class="weather-name">Light Rain</span>
+                                        <span class="weather-desc">Snow/Rain</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="weather-option" data-value="heavy_rain">
+                                    <div class="weather-icon stormy">
+                                        <i class="fas fa-bolt"></i>
+                                    </div>
+                                    <div class="weather-details">
+                                        <span class="weather-name">Heavy Rain</span>
+                                        <span class="weather-desc">Thunderstorm</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="weathersit" name="weathersit" value="clear" required>
+                        </div>
+
+                        <!-- Environment Factors -->
+                        <div class="section">
+                            <div class="section-header">
+                                <i class="fas fa-thermometer-half"></i>
+                                <h3>Environmental Factors</h3>
+                            </div>
+                            
+                            <div class="slider-group">
+                                <div class="slider-item">
+                                    <div class="slider-label">
+                                        <i class="fas fa-temperature-high"></i>
+                                        <span>Temperature</span>
+                                        <span class="slider-value" id="temp-value">0.24</span>
+                                    </div>
+                                    <input type="range" id="temp" name="temp" min="0" max="100" value="24" class="range-slider">
+                                    <div class="slider-minmax">
+                                        <span>0.0</span>
+                                        <span>1.0</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="slider-item">
+                                    <div class="slider-label">
+                                        <i class="fas fa-temperature-high"></i>
+                                        <span>Feeling Temperature</span>
+                                        <span class="slider-value" id="atemp-value">0.2879</span>
+                                    </div>
+                                    <input type="range" id="atemp" name="atemp" min="0" max="100" value="29" class="range-slider">
+                                    <div class="slider-minmax">
+                                        <span>0.0</span>
+                                        <span>1.0</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="slider-item">
+                                    <div class="slider-label">
+                                        <i class="fas fa-tint"></i>
+                                        <span>Humidity</span>
+                                        <span class="slider-value" id="hum-value">0.81</span>
+                                    </div>
+                                    <input type="range" id="hum" name="hum" min="0" max="100" value="81" class="range-slider">
+                                    <div class="slider-minmax">
+                                        <span>0%</span>
+                                        <span>100%</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="slider-item">
+                                    <div class="slider-label">
+                                        <i class="fas fa-wind"></i>
+                                        <span>Wind Speed</span>
+                                        <span class="slider-value" id="windspeed-value">0.0</span>
+                                    </div>
+                                    <input type="range" id="windspeed" name="windspeed" min="0" max="100" value="0" class="range-slider">
+                                    <div class="slider-minmax">
+                                        <span>0.0</span>
+                                        <span>1.0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="predict-btn">
+                            <i class="fas fa-bolt"></i>
+                            <span>Generate Prediction</span>
+                            <div class="btn-shine"></div>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Panel - Results -->
+            <div class="results-panel">
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-chart-line"></i> Prediction Results</h2>
+                        <div class="panel-subtitle">AI-generated demand forecast</div>
+                    </div>
+
+                    <div class="results-content">
+                        <!-- Main Prediction Display -->
+                        <div class="prediction-display" id="prediction-display">
+                            <div class="placeholder-state">
+                                <div class="placeholder-icon">
+                                    <i class="fas fa-bicycle"></i>
+                                </div>
+                                <h3>Awaiting Input</h3>
+                                <p>Configure parameters and generate prediction</p>
+                            </div>
+                        </div>
+
+                        <!-- Active Results -->
+                        <div class="results-breakdown" id="results-breakdown" style="display: none;">
+                            <div class="breakdown-header">
+                                <h3><i class="fas fa-chart-pie"></i> Demand Analysis</h3>
+                            </div>
+                            
+                            <div class="breakdown-grid">
+                                <div class="breakdown-card">
+                                    <div class="breakdown-icon casual">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="breakdown-content">
+                                        <div class="breakdown-label">Casual Users</div>
+                                        <div class="breakdown-value" id="casual-count">-</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="breakdown-card">
+                                    <div class="breakdown-icon registered">
+                                        <i class="fas fa-user-check"></i>
+                                    </div>
+                                    <div class="breakdown-content">
+                                        <div class="breakdown-label">Registered Users</div>
+                                        <div class="breakdown-value" id="registered-count">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="total-demand">
+                                <div class="total-label">
+                                    <i class="fas fa-bicycle"></i>
+                                    Total Bike Demand
+                                </div>
+                                <div class="total-value" id="total-demand">-</div>
+                            </div>
+                        </div>
+
+                        <!-- Insights Panel -->
+                        <div class="insights-panel" id="insights-panel" style="display: none;">
+                            <div class="insights-header">
+                                <h3><i class="fas fa-brain"></i> AI Insights</h3>
+                            </div>
+                            <div class="insights-content" id="insights-content">
+                                <!-- Insights will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Dataset Information -->
+                        <div class="dataset-card">
+                            <div class="dataset-header">
+                                <i class="fas fa-database"></i>
+                                <h3>Dataset Information</h3>
+                            </div>
+                            <p class="dataset-info">
+                                Based on Capital Bikeshare data from Washington D.C. (2011-2012)
+                            </p>
+                            <div class="citation">
+                                <i class="fas fa-quote-left"></i>
+                                <small>Fanaee-T, Hadi, and Gama, Joao, "Event labeling combining ensemble detectors and background knowledge", Progress in Artificial Intelligence (2013)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <!-- <footer class="main-footer">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <div class="footer-logo">
+                        <i class="fas fa-bicycle"></i>
+                        <span>BikeShareAI Forecasting System</span>
+                    </div>
+                    <p class="footer-text">Advanced ML model for urban mobility prediction</p>
+                </div>
+                
+                <div class="footer-right">
+                    <div class="tech-stack">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Flask</span>
+                        <span class="tech-tag">Polynomial Regression</span>
+                        <span class="tech-tag">Pandas</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div> -->
+
+    <!-- Loading Modal -->
+    <div class="loading-modal" id="loading-modal">
+        <div class="modal-content">
+            <div class="loading-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+            </div>
+            <h3>Processing Prediction</h3>
+            <p>Analyzing patterns with machine learning...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
