@@ -440,7 +440,6 @@ body {
     background: var(--bg-surface);
     border-radius: 3px;
     outline: none;
-    -webkit-appearance: none;
     margin-bottom: 10px;
 }
 
@@ -658,7 +657,6 @@ input:checked + .slider + .toggle-text {
     background: var(--bg-hover);
     border-radius: 4px;
     outline: none;
-    -webkit-appearance: none;
     margin-bottom: 10px;
 }
 
