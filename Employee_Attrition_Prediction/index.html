@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Attrition Prediction Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #7c3aed;
+            --primary-light: #8b5cf6;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --dark-bg: #0f172a;
+            --dark-surface: #1e293b;
+            --dark-surface-light: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --dropdown-bg: #1e293b;
+            --dropdown-hover: #334155;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 20%);
+            padding-bottom: 80px; /* Space for sticky credit */
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary-light);
+        }
+
+        .logo h1 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            background: linear-gradient(to right, var(--primary-light), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .tagline {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 50px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .api-status i {
+            color: var(--secondary);
+        }
+
+        .api-status span {
+            font-weight: 500;
+        }
+
+        /* Sticky Developer Credit */
+        .developer-credit {
+            position: fixed;
+            bottom: 15px;
+            left: 88%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 15px 10px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(124, 58, 237, 0.1),
+                0 0 30px rgba(124, 58, 237, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: float 6s ease-in-out infinite;
+            min-width: 315px;
+            max-width: 90%;
+        }
+
+        .developer-credit i {
+            font-size: 1.5rem;
+            color: var(--primary-light);
+            background: rgba(124, 58, 237, 0.2);
+            padding: 10px;
+            border-radius: 50%;
+            border: 1px solid rgba(124, 58, 237, 0.3);
+        }
+
+        .credit-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .credit-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .credit-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary-light), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateX(-50%) translateY(0px);
+                box-shadow: 
+                    0 10px 40px rgba(0, 0, 0, 0.4),
+                    0 0 0 1px rgba(124, 58, 237, 0.1),
+                    0 0 30px rgba(124, 58, 237, 0.2);
+            }
+            50% {
+                transform: translateX(-50%) translateY(-10px);
+                box-shadow: 
+                    0 15px 50px rgba(0, 0, 0, 0.5),
+                    0 0 0 1px rgba(124, 58, 237, 0.2),
+                    0 0 40px rgba(124, 58, 237, 0.3);
+            }
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1100px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .developer-credit {
+                min-width: 250px;
+                padding: 12px 20px;
+            }
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            color: var(--primary-light);
+        }
+
+        .card-title h2 {
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        input, select {
+            padding: 14px;
+            background: var(--dropdown-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        select option {
+            background-color: var(--dropdown-bg);
+            color: var(--text-primary);
+            padding: 12px;
+            border: none;
+        }
+
+        select option:hover,
+        select option:focus,
+        select option:checked {
+            background-color: var(--dropdown-hover) !important;
+            color: var(--text-primary) !important;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
+        }
+
+        input:hover, select:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background-color: var(--dropdown-hover);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            grid-column: 1 / -1;
+        }
+
+        button {
+            padding: 16px 30px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            flex: 2;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .result-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        .result-content {
+            text-align: center;
+        }
+
+        .prediction-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .probability-display {
+            margin: 30px 0;
+        }
+
+        .probability-value {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary-light), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .probability-label {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        .threshold-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .threshold-info span {
+            color: var(--primary-light);
+            font-weight: 600;
+        }
+
+        .prediction-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .prediction-low {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--secondary);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .prediction-high {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            margin-top: 40px;
+        }
+
+        .loading {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-light);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .response-time {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 10px;
+        }
+
+        /* Rating helper */
+        .rating-helper {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .rating-scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .scale-item {
+            text-align: center;
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <div>
+                    <h1>Employee Attrition Predictor</h1>
+                    <div class="tagline">IBM Data Science - Employee Attrition Analysis Dashboard</div>
+                </div>
+            </div>
+            <div class="api-status">
+                <i class="fas fa-circle"></i>
+                <span id="status-text">API Ready</span>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-user-edit"></i>
+                    <h2>Employee Information</h2>
+                </div>
+                
+                <form id="prediction-form">
+                    <div class="form-grid">
+                        <!-- Basic Information -->
+                        <div class="form-group">
+                            <label for="Age">Age</label>
+                            <input type="number" id="Age" name="Age" min="18" max="70" value="35" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="Gender">Gender</label>
+                            <select id="Gender" name="Gender" required>
+                                <option value="Male">Male</option>
+                                <option value="Female" selected>Female</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="MaritalStatus">Marital Status</label>
+                            <select id="MaritalStatus" name="MaritalStatus" required>
+                                <option value="Single">Single</option>
+                                <option value="Married" selected>Married</option>
+                                <option value="Divorced">Divorced</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="DistanceFromHome">Distance From Home (miles)</label>
+                            <input type="number" id="DistanceFromHome" name="DistanceFromHome" min="1" max="30" value="10" required>
+                        </div>
+                        
+                        <!-- Education -->
+                        <div class="form-group">
+                            <label for="Education">Education Level</label>
+                            <select id="Education" name="Education" required>
+                                <option value="1">1 - Below College</option>
+                                <option value="2">2 - College</option>
+                                <option value="3" selected>3 - Bachelor</option>
+                                <option value="4">4 - Master</option>
+                                <option value="5">5 - Doctor</option>
+                            </select>
+                            <div class="rating-helper">1=Below College, 2=College, 3=Bachelor, 4=Master, 5=Doctor</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="EducationField">Education Field</label>
+                            <select id="EducationField" name="EducationField" required>
+                                <option value="Life Sciences">Life Sciences</option>
+                                <option value="Medical" selected>Medical</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Technical Degree">Technical Degree</option>
+                                <option value="Other">Other</option>
+                                <option value="Human Resources">Human Resources</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Job Information -->
+                        <div class="form-group">
+                            <label for="Department">Department</label>
+                            <select id="Department" name="Department" required>
+                                <option value="Sales">Sales</option>
+                                <option value="Research & Development" selected>Research & Development</option>
+                                <option value="Human Resources">Human Resources</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="JobRole">Job Role</label>
+                            <select id="JobRole" name="JobRole" required>
+                                <option value="Sales Executive">Sales Executive</option>
+                                <option value="Research Scientist" selected>Research Scientist</option>
+                                <option value="Laboratory Technician">Laboratory Technician</option>
+                                <option value="Manufacturing Director">Manufacturing Director</option>
+                                <option value="Healthcare Representative">Healthcare Representative</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Sales Representative">Sales Representative</option>
+                                <option value="Research Director">Research Director</option>
+                                <option value="Human Resources">Human Resources</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="JobLevel">Job Level (1-5)</label>
+                            <input type="number" id="JobLevel" name="JobLevel" min="1" max="5" value="2" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="BusinessTravel">Business Travel</label>
+                            <select id="BusinessTravel" name="BusinessTravel" required>
+                                <option value="Non-Travel">Non-Travel</option>
+                                <option value="Travel_Rarely">Travel Rarely</option>
+                                <option value="Travel_Frequently" selected>Travel Frequently</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="OverTime">Over Time</label>
+                            <select id="OverTime" name="OverTime" required>
+                                <option value="Yes">Yes</option>
+                                <option value="No" selected>No</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Ratings (1-4 scale) -->
+                        <div class="form-group">
+                            <label for="EnvironmentSatisfaction">Environment Satisfaction</label>
+                            <select id="EnvironmentSatisfaction" name="EnvironmentSatisfaction" required>
+                                <option value="1">1 - Low</option>
+                                <option value="2">2 - Medium</option>
+                                <option value="3" selected>3 - High</option>
+                                <option value="4">4 - Very High</option>
+                            </select>
+                            <div class="rating-scale">
+                                <div class="scale-item">1: Low</div>
+                                <div class="scale-item">2: Medium</div>
+                                <div class="scale-item">3: High</div>
+                                <div class="scale-item">4: Very High</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="JobInvolvement">Job Involvement</label>
+                            <select id="JobInvolvement" name="JobInvolvement" required>
+                                <option value="1">1 - Low</option>
+                                <option value="2">2 - Medium</option>
+                                <option value="3" selected>3 - High</option>
+                                <option value="4">4 - Very High</option>
+                            </select>
+                            <div class="rating-scale">
+                                <div class="scale-item">1: Low</div>
+                                <div class="scale-item">2: Medium</div>
+                                <div class="scale-item">3: High</div>
+                                <div class="scale-item">4: Very High</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="JobSatisfaction">Job Satisfaction</label>
+                            <select id="JobSatisfaction" name="JobSatisfaction" required>
+                                <option value="1">1 - Low</option>
+                                <option value="2">2 - Medium</option>
+                                <option value="3" selected>3 - High</option>
+                                <option value="4">4 - Very High</option>
+                            </select>
+                            <div class="rating-scale">
+                                <div class="scale-item">1: Low</div>
+                                <div class="scale-item">2: Medium</div>
+                                <div class="scale-item">3: High</div>
+                                <div class="scale-item">4: Very High</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="RelationshipSatisfaction">Relationship Satisfaction</label>
+                            <select id="RelationshipSatisfaction" name="RelationshipSatisfaction" required>
+                                <option value="1">1 - Low</option>
+                                <option value="2">2 - Medium</option>
+                                <option value="3" selected>3 - High</option>
+                                <option value="4">4 - Very High</option>
+                            </select>
+                            <div class="rating-scale">
+                                <div class="scale-item">1: Low</div>
+                                <div class="scale-item">2: Medium</div>
+                                <div class="scale-item">3: High</div>
+                                <div class="scale-item">4: Very High</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="WorkLifeBalance">Work Life Balance</label>
+                            <select id="WorkLifeBalance" name="WorkLifeBalance" required>
+                                <option value="1">1 - Bad</option>
+                                <option value="2">2 - Good</option>
+                                <option value="3" selected>3 - Better</option>
+                                <option value="4">4 - Best</option>
+                            </select>
+                            <div class="rating-scale">
+                                <div class="scale-item">1: Bad</div>
+                                <div class="scale-item">2: Good</div>
+                                <div class="scale-item">3: Better</div>
+                                <div class="scale-item">4: Best</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="PerformanceRating">Performance Rating</label>
+                            <select id="PerformanceRating" name="PerformanceRating" required>
+                                <option value="1">1 - Low</option>
+                                <option value="2">2 - Good</option>
+                                <option value="3" selected>3 - Excellent</option>
+                                <option value="4">4 - Outstanding</option>
+                            </select>
+                            <div class="rating-scale">
+                                <div class="scale-item">1: Low</div>
+                                <div class="scale-item">2: Good</div>
+                                <div class="scale-item">3: Excellent</div>
+                                <div class="scale-item">4: Outstanding</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Compensation -->
+                        <div class="form-group">
+                            <label for="MonthlyIncome">Monthly Income ($)</label>
+                            <input type="number" id="MonthlyIncome" name="MonthlyIncome" min="1000" max="20000" value="5000" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="DailyRate">Daily Rate ($)</label>
+                            <input type="number" id="DailyRate" name="DailyRate" min="100" max="1500" value="800" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="HourlyRate">Hourly Rate ($)</label>
+                            <input type="number" id="HourlyRate" name="HourlyRate" min="30" max="100" value="65" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="MonthlyRate">Monthly Rate ($)</label>
+                            <input type="number" id="MonthlyRate" name="MonthlyRate" min="2000" max="30000" value="20000" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="PercentSalaryHike">Percent Salary Hike</label>
+                            <input type="number" id="PercentSalaryHike" name="PercentSalaryHike" min="11" max="25" value="15" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="StockOptionLevel">Stock Option Level (0-3)</label>
+                            <input type="number" id="StockOptionLevel" name="StockOptionLevel" min="0" max="3" value="1" required>
+                        </div>
+                        
+                        <!-- Experience -->
+                        <div class="form-group">
+                            <label for="NumCompaniesWorked">Number of Companies Worked</label>
+                            <input type="number" id="NumCompaniesWorked" name="NumCompaniesWorked" min="0" max="10" value="2" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="TotalWorkingYears">Total Working Years</label>
+                            <input type="number" id="TotalWorkingYears" name="TotalWorkingYears" min="0" max="40" value="10" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="YearsAtCompany">Years At Company</label>
+                            <input type="number" id="YearsAtCompany" name="YearsAtCompany" min="0" max="40" value="7" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="YearsInCurrentRole">Years In Current Role</label>
+                            <input type="number" id="YearsInCurrentRole" name="YearsInCurrentRole" min="0" max="18" value="4" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="YearsSinceLastPromotion">Years Since Last Promotion</label>
+                            <input type="number" id="YearsSinceLastPromotion" name="YearsSinceLastPromotion" min="0" max="15" value="2" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="YearsWithCurrManager">Years With Current Manager</label>
+                            <input type="number" id="YearsWithCurrManager" name="YearsWithCurrManager" min="0" max="17" value="3" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="TrainingTimesLastYear">Training Times Last Year</label>
+                            <input type="number" id="TrainingTimesLastYear" name="TrainingTimesLastYear" min="0" max="6" value="3" required>
+                        </div>
+                        
+                        <div class="button-group">
+                            <button type="submit" class="btn-primary" id="predict-btn">
+                                <i class="fas fa-brain"></i> Predict Attrition Risk
+                            </button>
+                            <button type="button" id="reset-btn" class="btn-secondary">
+                                <i class="fas fa-redo"></i> Reset Form
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card result-card">
+                <div class="card-title">
+                    <i class="fas fa-chart-pie"></i>
+                    <h2>Prediction Results</h2>
+                </div>
+                
+                <div id="default-result" class="result-content">
+                    <div class="prediction-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3>IBM Employee Attrition Prediction</h3>
+                    <p>Fill out the employee information form and click "Predict Attrition Risk" to see the prediction results.</p>
+                    <div class="threshold-info">
+                        <p>Threshold for high attrition risk: <span>40%</span></p>
+                        <p>Probability above this threshold indicates high risk of employee leaving.</p>
+                        <p style="margin-top: 10px;"><i>Based on IBM HR Analytics Dataset</i></p>
+                    </div>
+                </div>
+                
+                <div id="loading-result" class="loading hidden">
+                    <div class="spinner"></div>
+                    <h3>Analyzing Employee Data...</h3>
+                    <p>Our AI model is processing the information to predict attrition risk.</p>
+                </div>
+                
+                <div id="prediction-result" class="result-content hidden">
+                    <div class="probability-display">
+                        <div class="probability-value" id="probability-value">0.00</div>
+                        <div class="probability-label">Attrition Probability</div>
+                    </div>
+                    
+                    <div id="prediction-text" class="prediction-text prediction-low">
+                        Low Risk: Employee likely to stay
+                    </div>
+                    
+                    <div class="threshold-info">
+                        <p>Threshold used: <span id="threshold-value">0.4</span></p>
+                        <p>Response time: <span id="response-time">0.00</span> seconds</p>
+                        <p>Model: IBM Employee Attrition Prediction</p>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <h4>Interpretation & Recommendations</h4>
+                        <p id="interpretation-text">Based on the employee data, the model predicts a low probability of attrition. This employee is likely to remain with the company.</p>
+                        <div id="recommendations" style="margin-top: 15px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">
+                            <h5 style="color: var(--primary-light); margin-bottom: 10px;">Suggested Actions:</h5>
+                            <p id="action-text">Continue current engagement strategies. Monitor satisfaction metrics quarterly.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>IBM Employee Attrition Prediction Dashboard &copy; 2023 | Based on IBM HR Analytics Dataset</p>
+            <p>All predictions are based on statistical models and should be used as a guide only.</p>
+        </footer>
+    </div>
+
+    <!-- Sticky Developer Credit -->
+    <div class="developer-credit">
+        <i class="fas fa-code"></i>
+        <div class="credit-text">
+            <div class="credit-label">Developed by</div>
+            <div class="credit-name">Muhammad Usman Khan</div>
+        </div>
+    </div>
+
+    <script>
+        // API configuration
+        const API_BASE_URL = 'http://localhost:8000';
+        
+        // DOM Elements
+        const form = document.getElementById('prediction-form');
+        const predictBtn = document.getElementById('predict-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const defaultResult = document.getElementById('default-result');
+        const loadingResult = document.getElementById('loading-result');
+        const predictionResult = document.getElementById('prediction-result');
+        const probabilityValue = document.getElementById('probability-value');
+        const predictionText = document.getElementById('prediction-text');
+        const thresholdValue = document.getElementById('threshold-value');
+        const responseTime = document.getElementById('response-time');
+        const interpretationText = document.getElementById('interpretation-text');
+        const actionText = document.getElementById('action-text');
+        const statusText = document.getElementById('status-text');
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                predictAttrition();
+            });
+            
+            // Set up reset button
+            resetBtn.addEventListener('click', function() {
+                form.reset();
+                showDefaultResult();
+                showNotification('Form reset to default values');
+            });
+            
+            // Load demo data for testing
+            loadDemoData();
+        });
+        
+        // Show notification
+        function showNotification(message) {
+            // Create a simple notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(30, 41, 59, 0.9);
+                backdrop-filter: blur(10px);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                border: 1px solid rgba(124, 58, 237, 0.3);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.innerHTML = `<i class="fas fa-info-circle" style="color: #8b5cf6; margin-right: 10px;"></i>${message}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Add CSS for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Show default result state
+        function showDefaultResult() {
+            defaultResult.classList.remove('hidden');
+            loadingResult.classList.add('hidden');
+            predictionResult.classList.add('hidden');
+        }
+        
+        // Show loading state
+        function showLoading() {
+            defaultResult.classList.add('hidden');
+            loadingResult.classList.remove('hidden');
+            predictionResult.classList.add('hidden');
+        }
+        
+        // Show prediction result
+        function showPrediction() {
+            defaultResult.classList.add('hidden');
+            loadingResult.classList.add('hidden');
+            predictionResult.classList.remove('hidden');
+        }
+        
+        // Make prediction request to FastAPI
+        async function predictAttrition() {
+            showLoading();
+            
+            // Collect form data
+            const formData = new FormData(form);
+            const data = {};
+            
+            // Convert form data to appropriate types
+            for (const [key, value] of formData.entries()) {
+                // Convert numeric fields
+                const numericFields = [
+                    'Age', 'DailyRate', 'HourlyRate', 'MonthlyRate', 
+                    'DistanceFromHome', 'Education', 'EnvironmentSatisfaction',
+                    'JobInvolvement', 'JobLevel', 'JobSatisfaction', 
+                    'MonthlyIncome', 'NumCompaniesWorked', 'PercentSalaryHike',
+                    'PerformanceRating', 'RelationshipSatisfaction', 
+                    'StockOptionLevel', 'TotalWorkingYears', 'TrainingTimesLastYear',
+                    'WorkLifeBalance', 'YearsAtCompany', 'YearsInCurrentRole',
+                    'YearsSinceLastPromotion', 'YearsWithCurrManager'
+                ];
+                
+                if (numericFields.includes(key)) {
+                    data[key] = parseInt(value);
+                } else {
+                    data[key] = value;
+                }
+            }
+            
+            try {
+                const startTime = performance.now();
+                
+                // Make API request
+                const response = await fetch(`${API_BASE_URL}/predict`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const endTime = performance.now();
+                const elapsedTime = ((endTime - startTime) / 1000).toFixed(2);
+                
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                // Update UI with results
+                updatePredictionUI(result, elapsedTime);
+                showNotification(`Prediction complete: ${(result.attrition_probability * 100).toFixed(1)}% probability`);
+                
+            } catch (error) {
+                console.error('Prediction error:', error);
+                
+                // Fallback to mock data if API is not available
+                showMockPrediction();
+                showNotification('Using mock data - API not available');
+            }
+        }
+        
+        // Update UI with prediction results
+        function updatePredictionUI(result, elapsedTime) {
+            const probability = result.attrition_probability;
+            const prediction = result.prediction;
+            const threshold = result.threshold_used;
+            
+            // Update probability value with animation
+            animateValue(probabilityValue, 0, probability * 100, 1000);
+            
+            // Update threshold value
+            thresholdValue.textContent = threshold;
+            
+            // Update response time
+            responseTime.textContent = elapsedTime;
+            
+            // Update prediction text and styling
+            if (prediction === 1) {
+                predictionText.textContent = 'High Risk: Employee likely to leave';
+                predictionText.className = 'prediction-text prediction-high';
+                interpretationText.textContent = `Based on the employee data, the model predicts a high probability (${(probability*100).toFixed(1)}%) of attrition. Key risk factors identified include low satisfaction scores and high overtime.`;
+                actionText.textContent = 'Recommend immediate retention strategy review, consider career development opportunities, salary review, and workload adjustment. Schedule one-on-one meeting within 2 weeks.';
+            } else {
+                predictionText.textContent = 'Low Risk: Employee likely to stay';
+                predictionText.className = 'prediction-text prediction-low';
+                interpretationText.textContent = `Based on the employee data, the model predicts a low probability (${(probability*100).toFixed(1)}%) of attrition. Employee shows good engagement and satisfaction levels.`;
+                actionText.textContent = 'Continue current engagement strategies. Monitor satisfaction metrics quarterly. Consider career progression opportunities in next review cycle.';
+            }
+            
+            showPrediction();
+        }
+        
+        // Mock prediction for demo purposes
+        function showMockPrediction() {
+            // Generate random probability between 0.1 and 0.8
+            const probability = Math.random() * 0.7 + 0.1;
+            const prediction = probability > 0.4 ? 1 : 0;
+            const elapsedTime = (Math.random() * 0.5 + 0.2).toFixed(2);
+            
+            const mockResult = {
+                attrition_probability: probability,
+                prediction: prediction,
+                threshold_used: 0.4
+            };
+            
+            updatePredictionUI(mockResult, elapsedTime);
+        }
+        
+        // Animate number value
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = progress * (end - start) + start;
+                element.textContent = value.toFixed(1);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+        
+        // Load demo data
+        function loadDemoData() {
+            // Demo data with realistic values
+            setTimeout(() => {
+                document.getElementById('Age').value = 42;
+                document.getElementById('DailyRate').value = 1100;
+                document.getElementById('HourlyRate').value = 80;
+                document.getElementById('MonthlyRate').value = 25000;
+                document.getElementById('BusinessTravel').value = 'Travel_Frequently';
+                document.getElementById('Department').value = 'Research & Development';
+                document.getElementById('DistanceFromHome').value = 22;
+                document.getElementById('Education').value = 4;
+                document.getElementById('EducationField').value = 'Life Sciences';
+                document.getElementById('EnvironmentSatisfaction').value = 2;
+                document.getElementById('Gender').value = 'Male';
+                document.getElementById('JobInvolvement').value = 2;
+                document.getElementById('JobLevel').value = 3;
+                document.getElementById('JobRole').value = 'Research Scientist';
+                document.getElementById('JobSatisfaction').value = 2;
+                document.getElementById('MaritalStatus').value = 'Married';
+                document.getElementById('MonthlyIncome').value = 8000;
+                document.getElementById('NumCompaniesWorked').value = 5;
+                document.getElementById('OverTime').value = 'Yes';
+                document.getElementById('PercentSalaryHike').value = 12;
+                document.getElementById('PerformanceRating').value = 3;
+                document.getElementById('RelationshipSatisfaction').value = 1;
+                document.getElementById('StockOptionLevel').value = 0;
+                document.getElementById('TotalWorkingYears').value = 18;
+                document.getElementById('TrainingTimesLastYear').value = 2;
+                document.getElementById('WorkLifeBalance').value = 2;
+                document.getElementById('YearsAtCompany').value = 10;
+                document.getElementById('YearsInCurrentRole').value = 7;
+                document.getElementById('YearsSinceLastPromotion').value = 6;
+                document.getElementById('YearsWithCurrManager').value = 5;
+            }, 100);
+        }
+    </script>
+</body>
+</html>
