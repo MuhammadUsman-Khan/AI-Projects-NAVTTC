@@ -53,4 +53,4 @@ if st.button("Predict House Price"):
 
     prediction = pipeline.predict(input_data)
 
-    st.success(f"The predicted median house value is ${prediction[0]:,.2f}")
+    st.success(f"The predicted median house value is ${prediction[0]:,.2f}") 
