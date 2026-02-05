@@ -535,4 +535,4 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize the application
     initializeForm();
-});
+}); 

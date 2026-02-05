@@ -741,7 +741,7 @@ input:checked + .slider + .toggle-text {
     align-items: center;
     justify-content: center;
 }
-
+ 
 .placeholder-icon i {
     font-size: 3rem;
     color: var(--primary);

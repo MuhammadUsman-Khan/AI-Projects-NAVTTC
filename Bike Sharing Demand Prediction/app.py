@@ -19,5 +19,5 @@ def predict():
     prediction = pipeline.predict(input_data)
     return jsonify({'predicted_demand': prediction[0]})
 
-if __name__ == '__main__':
+if __name__ == '__main__': 
     app.run(debug=True)
