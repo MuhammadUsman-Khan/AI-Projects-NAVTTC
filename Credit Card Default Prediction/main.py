@@ -26,7 +26,7 @@ st.write("This application predicts whether a credit card holder will default on
 # Load the trained pipeline
 @st.cache_resource
 def load_pipeline():
-    return joblib.load("credit_card_default_pipeline.pkl")
+    return joblib.load(PIPELINE_PATH)
 
 pipeline = load_pipeline()
 
