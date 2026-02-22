@@ -1,10 +1,6 @@
 import streamlit as st
 import pandas as pd
 import joblib
-import os 
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PIPELINE_PATH = os.path.join(BASE_DIR, "credit_card_default_pipeline.pkl")
 
 def predict_default(input_data):
     input_df = pd.DataFrame(input_data)
